@@ -248,7 +248,7 @@ import pandas as pd
 query_df = pd.DataFrame({
 	'query_name': ['udrcvuaxzjhbnvcyo', 'udrcvuaxzjhbnvcyo', 'zpnqahfsebkahuxiwooptjga', 'ryrujnbnciuzkpkypgoysyromxdvp', 'xfqiblw', 'fbceifhwyvgcwve', 'brlenjuadhbjaevowuwtfuoicgfey', 'kpeesbjqvadyizkbnxhbn', 'uhbszpgzphqybjwgctapd', 'duvrrsjdlqlmytfjjzulkar'],
 	'result': ['wnxkcarqhpqxzppjcxqwxe', 'mofniefpsnrsqkuxzespwomheagvgjdk', 'tngwcyyblyzlfyfxkxrgqwkbak', 'rhbqphhrcrkos', 'mzvvmmvieqgifmouv', 'zrauysnjmheavevrutqotncqrlspmsk', 'qzflaq', 'xxoissjlzknoz', 'qgmmfybfduwzxdjgvibvikmhvalwsyzqipnl', 'hnurzbqxzsrfxrnxxoxjshbrcxhxkfsofltikkmczqjsz'],
-	'position': [4, 5, 1, 1, 4, 3, 3, 2, 3, 2],
+	'position': [16, 10, 14, 3, 
 	'rating': [4, 8, 20, 13, 10, 14, 4, 7, 11, 10]
 })
 
@@ -258,8 +258,8 @@ out_df = query_df.groupby('query_name').agg(
 #	poor_query_percentage=('quality', lambda r: r['rating'] / r['position'].count())
 ).round(2).reset_index()
 
-out_df['poor_query_percentage'] = query_df.groupby('query_name').apply(
-	lambda r: (r['rating'] < 3).sum() / r['position'].count()
-).reset_index(drop=True)
-out_df['poor_query_percentage'] = (out_df['poor_query_percentage'] * 100).round(2)
+#out_df['poor_query_percentage'] = query_df.groupby('query_name').apply(
+#	lambda r: (r['rating'] < 3).sum() / r['position'].count()
+#).reset_index(drop=True)
+#out_df['poor_query_percentage'] = (out_df['poor_query_percentage'] * 100).round(2)
 print(out_df)
