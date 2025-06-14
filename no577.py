@@ -28,5 +28,18 @@ import pandas as pd
 | 2     | 500   |
 | 4     | 2000  |
 +-------+-------+
-
 '''
+employees_df = pd.DataFrame({
+	'empId': [3, 1, 2, 4],
+	'name': ['Brad', 'John', 'Dan', 'Thomas'],
+	'supervisor': [None, 3, 3, 3],
+	'salary': [4000, 1000, 2000, 4000]
+})
+bonus_df = pd.DataFrame({
+	'empId': [2, 4],
+	'bonus': [500, 2000]
+})
+
+merged_df = pd.merge(employees_df, bonus_df, on='empId', how='left')
+out_df = merged_df[merged_df['bonus'].isnull() | (merged_df['bonus'] < 1000)][['name', 'bonus']]
+print(out_df)
