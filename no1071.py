@@ -1,27 +1,50 @@
-import re
-
-def obtainRep(in_str: str, d:str='a') -> str:
-	len_str = len(in_str)
-	print(f'code:{d} len_str: {len_str}')
-	
-	for i in range(1, len_str):
-		b = in_str[0:i]
-		match_list = re.findall(b, in_str)
-		print(f'code:{d} match_list: {match_list} a:{in_str} b:{b}')
-		if len(match_list) * len(b) == len_str:
-			return b
-	return in_str
-
 def gcdOfStrings(str1: str, str2: str) -> str:
-	a = obtainRep(str1, '1')
-	b = obtainRep(str2, '2')
+	import math
+	len_str1 = len(str1)
+	len_str2 = len(str2)
 
-	print(f'a:{a} b:{b}')
-	if a == b:
-		return a
+	gcd_num = math.gcd(len_str1, len_str2)
+	str_list = []
+
+	for i in range(gcd_num):
+		c1 = str1[i]
+		c2 = str2[i]
+		if c1 == c2:
+			str_list.append(c1)
+		else:
+			return ''
+
+	match_str = ''.join(str_list)
+	if match_str == '':
+		return ''
+	
+	match_count1 = str1.count(match_str)
+	match_count2 = str2.count(match_str)
+
+	if len(match_str) == len_str1 / match_count1:
+		if len(match_str) == len_str2 / match_count2:
+			return match_str
+		else:
+			return ''
 	else:
 		return ''
+
 
 str1 = 'ABCABC'
 str2 = 'ABC'
 print(f'{str1} {str2} return: {gcdOfStrings(str1, str2)}')  # Output: ABC
+str1 = 'ABABAB'
+str2 = 'ABAB'
+print(f'{str1} {str2} return: {gcdOfStrings(str1, str2)}')  # Output: AB
+str1 = 'LEET'
+str2 = 'CODE'
+print(f'{str1} {str2} return: {gcdOfStrings(str1, str2)}')  # Output: ''
+str1 = 'ABCDEF'
+str2 = 'ABC'
+print(f'{str1} {str2} return: {gcdOfStrings(str1, str2)}')  # Output: ''
+str1 = 'AAAAAAAAA'
+str2 = 'AAACCC'
+print(f'{str1} {str2} return: {gcdOfStrings(str1, str2)}')  # Output: ''
+str1 = 'ABABCCABAB'
+str2 = 'ABAB'
+print(f'{str1} {str2} return: {gcdOfStrings(str1, str2)}')  # Output: ''
