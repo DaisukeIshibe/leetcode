@@ -1,4 +1,4 @@
-def countLargestGroup_(n: int) -> int:
+def countLargestGroup(n: int) -> int:
 	import collections
 	hashMap = collections.Counter()
 	for i in range(1, n + 1):
@@ -6,10 +6,10 @@ def countLargestGroup_(n: int) -> int:
 		hashMap[key] += 1
 	maxValue = max(hashMap.values())
 	count = sum(1 for v in hashMap.values() if v == maxValue)
-	print(hashMap)
+	#print(hashMap)
 	return count
 
-def countLargestGroup(n: int) -> int:
+def countLargestGroup_(n: int) -> int:
 	if n < 10:
 		return 1
 
@@ -34,8 +34,8 @@ def countLargestGroup(n: int) -> int:
 			count_dict[n] = 1
 		else:
 			count_dict[n] += 1
-	print('sum_dict', sum_dict)
-	print('len_num_list', len_num_list)
+	#print('sum_dict', sum_dict)
+	#print('len_num_list', len_num_list)
 	#print('not chosen_dict', not_chosen_dict.keys())
 	return max(count_dict.values())
 
@@ -48,12 +48,8 @@ def calcSum(n: int) -> int:
 	
 	return total
 
-#n = 13 # 4
-#n = 2
-#n = 24 # 5
-#n = 46 # 6
-#n = 264 # 2
-print(f"input 13, {countLargestGroup(13)}")
-print(f"input 24, {countLargestGroup(24)}")
-print(f"input 46, {countLargestGroup(46)}")
-print(f"input 264, {countLargestGroup(264)}")
+print(f"13, {countLargestGroup(13)} Expect 4")
+print(f"24, {countLargestGroup(24)} Expect 5")
+print(f"46, {countLargestGroup(46)} Expect 6")
+print(f"264, {countLargestGroup(264)} Expect 2")
+print(f"33, {countLargestGroup(33)} Expect 4")
