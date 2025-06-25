@@ -1,14 +1,28 @@
 class Solution:
     def compress(self, chars: list[str]) -> int:
-        len_chars = len(chars)
-        if len_chars == 1:
-            return 1
+        char_list = []
+        for c in chars:
+            if char_list == []:
+                char_list.append([c])
+            else:
+                if char_list[-1][-1] == c:
+                    char_list[-1].append(c)
+                else:
+                    char_list.append([c])
 
-        idx = 0
+        count_list = [[c[0], c.count(c[0])] for c in char_list]
         out_list = []
-        for i in range(len_chars - 1):
-            pass
-        return 0
+        for char, count in count_list:
+            if count == 1:
+                out_list.append(char)
+            else:
+                count_str = str(count)
+                out_list.append(char)
+                for c in count_str:
+                    out_list.append(c)
+
+        print(out_list)
+        return len(out_list)
 
 sol = Solution()
 print(f'{sol.compress(["a","a","b","b","c","c","c"])} expect 6 / "a2b2c3"')
