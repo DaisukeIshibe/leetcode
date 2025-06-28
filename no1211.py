@@ -239,27 +239,101 @@ import pandas as pd
 +--------------------------------+----------------------------------------------------+----------+--------+
 
 '''
-#query_df = pd.DataFrame({
-#	'query_name': ['Dog', 'Dog', 'Dog', 'Cat', 'Cat', 'Cat'],
-#	'result': ['Golden Retriever', 'German Shepherd', 'Mule', 'Shirazi', 'Siamese', 'Sphynx'],
-#	'position': [1, 2, 200, 5, 3, 7],
-#	'rating': [5, 5, 1, 2, 3, 4]
-#})
-query_df = pd.DataFrame({
-	'query_name': ['udrcvuaxzjhbnvcyo', 'udrcvuaxzjhbnvcyo', 'zpnqahfsebkahuxiwooptjga', 'ryrujnbnciuzkpkypgoysyromxdvp', 'xfqiblw', 'fbceifhwyvgcwve', 'brlenjuadhbjaevowuwtfuoicgfey', 'kpeesbjqvadyizkbnxhbn', 'uhbszpgzphqybjwgctapd', 'duvrrsjdlqlmytfjjzulkar'],
-	'result': ['wnxkcarqhpqxzppjcxqwxe', 'mofniefpsnrsqkuxzespwomheagvgjdk', 'tngwcyyblyzlfyfxkxrgqwkbak', 'rhbqphhrcrkos', 'mzvvmmvieqgifmouv', 'zrauysnjmheavevrutqotncqrlspmsk', 'qzflaq', 'xxoissjlzknoz', 'qgmmfybfduwzxdjgvibvikmhvalwsyzqipnl', 'hnurzbqxzsrfxrnxxoxjshbrcxhxkfsofltikkmczqjsz'],
-	'position': [16, 10, 14, 3, 
-	'rating': [4, 8, 20, 13, 10, 14, 4, 7, 11, 10]
+queries_df = pd.DataFrame({
+	'query_name': ['Dog', 'Dog', 'Dog', 'Cat', 'Cat', 'Cat'],
+	'result': ['Golden Retriever', 'German Shepherd', 'Mule', 'Shirazi', 'Siamese', 'Sphynx'],
+	'position': [1, 2, 200, 5, 3, 7],
+	'rating': [5, 5, 1, 2, 3, 4]
 })
 
+
+query_list = queries_df['query_name'].unique().tolist()
+out_df = pd.DataFrame(columns=['query_name', 'quality', 'poor_query_percentage'])
+quality_list = []
+poor_query_percentage_list = []
+for query in query_list:
+	query_df = queries_df[queries_df['query_name'] == query].copy()
+	query_df['quality'] = query_df['rating'] / query_df['position']
+	quality = query_df['quality'].mean()
+	low_rating_count = query_df[query_df['rating'] < 3].shape[0]
+	quality_list.append(f'{quality:.2f}')
+	poor_query_percentage_list.append(f'{low_rating_count / query_df.shape[0] * 100:.2f}')
+
+print(query_list, quality_list, poor_query_percentage_list)
+out_df['query_name'] = query_list
+out_df['quality'] = quality_list
+out_df['poor_query_percentage'] = poor_query_percentage_list
+print(out_df)
+''' # Example code to calculate quality and poor query percentage
 query_df['quality'] = query_df['rating'] / query_df['position']
 out_df = query_df.groupby('query_name').agg(
 	quality=('quality', 'mean'),
 #	poor_query_percentage=('quality', lambda r: r['rating'] / r['position'].count())
 ).round(2).reset_index()
+'''
 
-#out_df['poor_query_percentage'] = query_df.groupby('query_name').apply(
-#	lambda r: (r['rating'] < 3).sum() / r['position'].count()
-#).reset_index(drop=True)
-#out_df['poor_query_percentage'] = (out_df['poor_query_percentage'] * 100).round(2)
-print(out_df)
+
+'''
++--------------------------------+---------+-----------------------+
+| query_name                     | quality | poor_query_percentage |
+| ------------------------------ | ------- | --------------------- |
+| pdxafib                        | 0.34    | 0                     |
+| mpzkxkzbompbpbavkb             | 0.08    | 100                   |
+| udrcvuaxzjhbnvcyo              | 0.41    | 33.33                 |
+| xdyoviczumlpchsnsbnwqmljgh     | 0.46    | 25                    |
+| snhrdtzetlihfenkdjyatadzhskomr | 0.39    | 16.67                 |
+| dcuzwcamcq                     | 0.27    | 40                    |
+| wrtmvtnx                       | 0.31    | 50                    |
+| jgmsykrgxja                    | 0.22    | 20                    |
+| ebjfgw                         | 0.3     | 42.86                 |
+| tlbaycikeiljhfvpwjzhdo         | 0.57    | 50                    |
+| yitrgpgc                       | 0.18    | 50                    |
+| drjghcpuulxohcihqoqwevt        | 0.24    | 28.57                 |
+| ekibmwgcor                     | 0.22    | 25                    |
+| iqvnelhdfrviaelkyjwywujr       | 0.52    | 33.33                 |
+| gqzldthnjzeclmapupzqeymvlv     | 0.57    | 25                    |
+| uecqxryoivbnuo                 | 0.24    | 50                    |
+| xfqiblw                        | 1.01    | 16.67                 |
+| zpnqahfsebkahuxiwooptjga       | 0.86    | 50                    |
+| ryrujnbnciuzkpkypgoysyromxdvp  | 1.44    | 66.67                 |
+| fbceifhwyvgcwve                | 0.75    | 50                    |
+| brlenjuadhbjaevowuwtfuoicgfey  | 0.48    | 16.67                 |
+| kpeesbjqvadyizkbnxhbn          | 1.55    | 33.33                 |
+| uhbszpgzphqybjwgctapd          | 0.84    | 33.33                 |
+| duvrrsjdlqlmytfjjzulkar        | 0.72    | 50                    |
+| haprwqoidtasctuzum             | 0.33    | 66.67                 |
+| inrbgu                         | 0.27    | 75                    |
+| dfyiagitstfpzycnojhfegbfcsmr   | 0.7     | 0                     |
+| cfcwoydsmbcqds                 | 1.42    | 25                    |
+| fzvkiv                         | 0.48    | 0                     |
+| cjtxatphhnxwxkfjcojmvh         | 0.13    | 50                    |
+| niziwbxkmgjut                  | 0.39    | 0                     |
+| xhbmfnz                        | 0.34    | 33.33                 |
+| ohwctqqdscnlxaqeqhcspxcb       | 0.78    | 0                     |
+| vrdbnlmwbnrawopttryqkkfsjkx    | 0.69    | 50                    |
+| cfzjkoi                        | 0.33    | 50                    |
+| boxmkivtcmaqgucfayepvdlrzkwstd | 0.16    | 66.67                 |
+| onjjde                         | 0.2     | 50                    |
+| vxjmolnmove                    | 0.4     | 25                    |
+| oiunaci                        | 0.36    | 33.33                 |
+| stoomzsizgwpwguaikpdwwtczqt    | 1.65    | 20                    |
+| nvdrmuirylwyfvhqk              | 0.24    | 33.33                 |
+| hpzxmamailhqhipufrbhsbr        | 0.18    | 0                     |
+| mlcehcpuajedlk                 | 0.31    | 50                    |
+| fzjchf                         | 0.92    | 50                    |
+| qbaszrbkjiprliebfcju           | 0.41    | 40                    |
+| fnxeqcpkjwbshszzlndo           | 0.96    | 40                    |
+| tfdmtfiegtqxixexmiqktspvonyw   | 0.6     | 0                     |
+| sjmpwulsgiiokkoxzmfrhfwjqegdf  | 0.67    | 50                    |
+| skcyovx                        | 0.33    | 0                     |
+| tyrratimtbonzdwfsiurodhacx     | 0.41    | 0                     |
+| alprumqp                       | 0.13    | 100                   |
+| glrqfhvwegnkw                  | 0.3     | 0                     |
+| vbhbbbnntqiocpwf               | 0.48    | 33.33                 |
+| szsgysmafhfhstnagzhryxykvkmzn  | 0.33    | 50                    |
+| ejzvfzcid                      | 1.63    | 0                     |
+| zaeoxboasertlctguemxos         | 0.79    | 33.33                 |
+| unhozkflppkialzjsaaqjbdhsb     | 0.29    | 50                    |
+| wwsrvtgndehtxtnnr              | 0.43    | 0                     |
++--------------------------------+---------+-----------------------+
+'''
