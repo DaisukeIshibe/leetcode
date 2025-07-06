@@ -7,8 +7,6 @@ class Solution:
 			else:
 				n_dict[n] += 1
         
-		len_n = len(n_dict)
-		min_val = 0
 		max_len = 0
 		n_list = sorted(n_dict.keys())
 		for i in range(len(n_list) - 1):
@@ -16,15 +14,9 @@ class Solution:
 			curr = n_list[i]
 			diff = next - curr
 			if diff == 1:
-				min_val = diff
-				max_len = n_dict[curr] + n_dict[next]
-			
-			if min_val == diff:
 				interm = n_dict[curr] + n_dict[next]
 				if interm > max_len:
 					max_len = interm
-			#else:
-			#	break
 		
 		#print(n_list, min_val, max_len)
 		return max_len
