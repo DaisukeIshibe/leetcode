@@ -1,33 +1,15 @@
 class Solution:
     def buddyStrings(self, s: str, goal: str) -> bool:
-        if len(s) == 1:
-             return False
-        if len(s) == 2:
-            if s[::-1] == goal:
-                return True
-            else:
-                return False
-        
-        if s == goal:
-            return True
-             
-        w_count = 0
-        w_list = []
-        for c_s, c_g in zip(s, goal):
-            if c_s != c_g:
-                w_list.append([c_s, c_g])
-                w_count +=1
-        
-        if w_count == 2:
-            if w_list[0] == w_list[1]:
-                return False
-            else:
-                if w_list[0][1] == w_list[1][0] and w_list[0][0] == w_list[1][1]:
-                    return True
-                else:
-                    return False
-        else:
-	        return False
+        len_s = len(s)
+        if len_s <= 2:
+            return False
+    
+        s_list = [(c, idx) for idx, c in enumerate(s)]
+        g_list = [(g, idx) for idx, g in enumerate(goal)]
+        for (c, c_idx), (g, g_idx) in zip(s_list, g_list):
+            if c != g:
+                pass
+        return False
     
 sol = Solution()
 s = "ab"
