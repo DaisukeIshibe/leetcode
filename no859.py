@@ -1,14 +1,20 @@
 class Solution:
+    def makeDict(self, s: str) -> dict:
+        s_dict: dict = {}
+        for idx, c in enumerate(s):
+            if not c in s_dict:
+                s_dict[c] = [idx]
+            else:
+                s_dict[c].append(idx)
+        return s_dict
+
+
     def buddyStrings(self, s: str, goal: str) -> bool:
-        len_s = len(s)
-        if len_s <= 2:
-            return False
-    
-        s_list = [(c, idx) for idx, c in enumerate(s)]
-        g_list = [(g, idx) for idx, g in enumerate(goal)]
-        for (c, c_idx), (g, g_idx) in zip(s_list, g_list):
-            if c != g:
-                pass
+        s_dict = self.makeDict(s)
+        g_dict = self.makeDict(goal)
+
+        print(s_dict, g_dict)
+            
         return False
     
 sol = Solution()
