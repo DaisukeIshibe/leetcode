@@ -8,14 +8,26 @@ class Solution:
                 s_dict[c].append(idx)
         return s_dict
 
-
     def buddyStrings(self, s: str, goal: str) -> bool:
-        s_dict = self.makeDict(s)
-        g_dict = self.makeDict(goal)
+        if len(s) != len(goal):
+            return False
+        
+        if s == goal:
+            s_dict = self.makeDict(s)
+            for v in s_dict.values():
+                if len(v) > 1:
+                    return True
+            return False
+        
+        diff = []
+        for i in range(len(s)):
+            if s[i] != goal[i]:
+                diff.append((s[i], goal[i]))
+                if len(diff) > 2:
+                    return False
+        
+        return len(diff) == 2 and diff[0] == diff[1][::-1]
 
-        print(s_dict, g_dict)
-            
-        return False
     
 sol = Solution()
 s = "ab"
@@ -44,4 +56,10 @@ goal = "abab"
 print(f'{sol.buddyStrings(s, goal)} expect True') # Expect True
 s = "abcd"
 goal = "abcd"
+print(f'{sol.buddyStrings(s, goal)} expect False') # Expect False
+s = "aaaaaaabc"
+goal = "aaaaaaacb"
+print(f'{sol.buddyStrings(s, goal)} expect True') # Expect True
+s = "ab"
+goal = "babbb"
 print(f'{sol.buddyStrings(s, goal)} expect False') # Expect False
