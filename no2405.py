@@ -1,13 +1,22 @@
 class Solution:
     def partitionString(self, s: str) -> int:
+        uniq_num = len(set(s))
+        if uniq_num == 1:
+            return len(s)
+        
+        for i in range(len(s) - uniq_num + 1):
+            phrase = s[i:i+uniq_num]
+
+        return 0
+
+    def partitionString_(self, s: str) -> int:
         uniq_max_num = len(set(s))
         if uniq_max_num == 1:
             return len(s)
 
         s_list = [s]
-        total = 0        
+        total = 0
         # Find the longest frame
-        break_flag = False
         for uniq_num in range(uniq_max_num, 1, -1):
             for idx, s_ in enumerate(s_list):
                 for i in range(len(s_) - uniq_num + 1):
@@ -19,13 +28,13 @@ class Solution:
                         s_list.append(s0)
                         s_list.append(s1)
                         total += 1
-                        print(f'unique {uniq_num} {phrase} Update->{s}')
-                        break_flag = True
+                        uniq_num -= 1
+                        if uniq_num == -1:
+                            s_list.clear()
+                        #print(f'unique {uniq_num} {phrase} Update->{s_list} total->{total}')
                         break
-            if break_flag:
-                break
         
-        return total + len(s)
+        return total + len([s for s in s_list if len(s) != 0])
 
 
 sol = Solution()
@@ -42,6 +51,12 @@ status = 'OK' if ret == expect else 'NG'
 print(f'{ret} {expect} {status} {s}')
 
 s = "hdklqkcssgxlvehva"
+ret = sol.partitionString(s)
+expect = 4
+status = 'OK' if ret == expect else 'NG'
+print(f'{ret} {expect} {status} {s}')
+
+s = "yzubfsiypfrepcfftiov"
 ret = sol.partitionString(s)
 expect = 4
 status = 'OK' if ret == expect else 'NG'
