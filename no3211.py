@@ -5,18 +5,14 @@ class Solution:
 
         m = 2 ** n
         out_list = []
-        for i in range(m):
-            if i == 0:
-                continue
+        for i in range(1, m):
             bin_str = bin(i)[2:]
             len_str = len(bin_str)
             if len_str != n:
-                for j in range(n - len_str):
-                    bin_str = '0' + bin_str
+                bin_str = bin_str.zfill(n)
             if '00' in bin_str:
                 continue
             out_list.append(bin_str)
-            print(f'{i} {bin_str}')
         return out_list
 
 sol = Solution()

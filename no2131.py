@@ -1,47 +1,53 @@
-def is_same(s:str) -> bool:
-	return True if len(set(list(s))) == 1 else False
+class Solution:
+    def longestPalindrome(self, words: list[str]) -> int:
+        w_dict: dict = {}
+        for w in words:
+            if not w in w_dict:
+                w_dict[w] = 1
+            else:
+                w_dict[w] += 1
 
-def longestPalindrome(self, words: list[str]) -> int:
-	# First, check if there are any words that are the same
-	same_dict:dict = {}
-	for _, w in enumerate(words):
-		if is_same(w):
-			if not w in same_dict:
-				same_dict[w] = 1
-			else:
-				same_dict[w] += 1
-	uniq_w = len(set(same_dict.keys()))
-	same_count = sum([v for v in same_dict.values()])
+        count_rev: int = 0
+        for w in words:
+            if len(set(w)) == 1:
+                continue
+            rev_w = w[::-1]
+            if rev_w in w_dict:
+                add_val = min(w_dict[w], w_dict[rev_w]) * 4
+                count_rev += add_val
+                if rev_w in w_dict:
+                    del w_dict[rev_w]
+                if w in w_dict:
+                    del w_dict[w]
+            else:
+                if w in w_dict:
+                    del w_dict[w]
+        
+        if len(w_dict) == 0:
+            return count_rev
 
-	if same_count >= (uniq_w * 4 - 2):
-		same_count *= 2
-	else:
-		same_count = 2
+        count_same: int = 0
+        max_key, max_val = sorted(w_dict.items(), key=lambda x:x[1])[-1]
+        if max_val == 1:
+            return count_rev + 2
+        else:
+            # consider 
+            print(f'left words {w_dict}')
+            pass
+        
+        return count_rev + count_same
 
-	cand_list:list = [w for w in words if (not w in same_dict)]
-	cand_dict:dict = {}
-	while True:
-		if len(cand_list) == 0:
-			break
-		else:
-			w = cand_list.pop(0)
-			rev_w = w[::-1]
-			if rev_w in cand_list:
-				if not w in cand_dict:
-					cand_dict[w] = 1
-				else:
-					cand_dict[w] += 1
-				cand_list.remove(rev_w)
-	
-	mirror_count:int = sum(cand_dict.values())
-	mirror_count *= 4 # Each pair of mirror words contributes four to the palindrome length
-	total = same_count + mirror_count
-	print(f'cand_list = {cand_list}, same_count = {same_count}, mirror_count = {mirror_count}, total = {total}')
-	return total
+sol = Solution()
 
 w = ["lc","cl","gg"]
-print(f'words = {w} act = {longestPalindrome(None, w)} expect = 6')
+print(f'words = {w} act = {sol.longestPalindrome(w)} expect = 6')
 w = ["ab","ty","yt","lc","cl","ab"]
-print(f'words = {w} act = {longestPalindrome(None, w)} expect = 8')
+print(f'words = {w} act = {sol.longestPalindrome(w)} expect = 8')
 w = ["cc","ll","xx"]
-print(f'words = {w} act = {longestPalindrome(None, w)} expect = 2')
+print(f'words = {w} act = {sol.longestPalindrome(w)} expect = 2')
+w = ["dd","aa","bb","dd","aa","dd","bb","dd","aa","cc","bb","cc","dd","cc"]
+print(f'words = {w} act = {sol.longestPalindrome(w)} expect = 22')
+w = ["nn","nn","hg","gn","nn","hh","gh","nn","nh","nh"]
+print(f'words = {w} act = {sol.longestPalindrome(w)} expect = 14')
+w = ["em","pe","mp","ee","pp","me","ep","em","em","me"]
+print(f'words = {w} act = {sol.longestPalindrome(w)} expect = 14')
