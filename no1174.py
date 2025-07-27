@@ -131,21 +131,27 @@ delivery_df = pd.DataFrame({
 	]
 }) # Expect 37.5
 
-customer_list = delivery_df['customer_id'].unique().tolist()
-immediate_count = 0
-for customer in customer_list:
-	# Get the delivery_id for the current customer
-	order_list = sorted(delivery_df[delivery_df['customer_id'] == customer]['order_date'].unique().tolist())
-	first_order_date = order_list[0] if order_list else None
-	delivery_date = delivery_df[delivery_df['customer_id'] == customer]['customer_pref_delivery_date'].iloc[0]
-	if first_order_date == delivery_date:
-		immediate_count += 1
+# Convert date columns to datetime
+delivery_df['order_date'] = pd.to_datetime(delivery_df['order_date'])
+delivery_df['customer_pref_delivery_date'] = pd.to_datetime(delivery_df['customer_pref_delivery_date'])
 
-immediate_percentage = immediate_count / len(customer_list) * 100 if customer_list else 0
-# Rounding to 2 decimal places
-immediate_percentage = round(immediate_percentage, 2)
+# Find the first order for each customer (earliest order_date)
+first_orders = delivery_df.loc[delivery_df.groupby('customer_id')['order_date'].idxmin()]
 
-out_df = pd.DataFrame({
-	'immediate_percentage': [immediate_percentage]
-})
-print(out_df)
+# Check if the first order is immediate (order_date == customer_pref_delivery_date)
+first_orders['is_immediate'] = (first_orders['order_date'] == first_orders['customer_pref_delivery_date'])
+
+# Calculate the percentage of immediate orders
+immediate_percentage = (first_orders['is_immediate'].sum() / len(first_orders)) * 100
+
+# Round to 2 decimal places
+result = round(immediate_percentage, 2)
+
+print(f"Percentage of immediate orders in first orders: {result}%")
+print(f"Total first orders: {len(first_orders)}")
+print(f"Immediate first orders: {first_orders['is_immediate'].sum()}")
+
+# Verify the calculation
+print("\nFirst orders details:")
+print(first_orders[['customer_id', 'order_date', 'customer_pref_delivery_date', 'is_immediate']].sort_values('customer_id'))
+
