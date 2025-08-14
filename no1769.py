@@ -8,7 +8,6 @@ class Solution:
                 idx_dict[idx] = True
         out_list = [0] * len_boxes
         for i in range(len_boxes):
-            c = boxes[i]
             total_move: int = 0
             for d_i in idx_dict.keys():
                 if d_i == i:
