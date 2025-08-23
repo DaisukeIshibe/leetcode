@@ -1,27 +1,37 @@
-import itertools
+class Solution:
+    def lengthOfLongestSubstring_(self, s: str) -> int:
+        max_len = len(set(s))
+        len_s = len(s)
+        
+        while True:
+            if max_len == 1:
+                break
+            for i in range(len_s - max_len + 1):
+                str_ = s[i:max_len + i]
+                if len(set(str_)) == len(str_):
+                    return max_len
+            max_len -= 1
+        return max_len
 
-def lengthOfLongestSubstring_(s: str) -> int:
-	s_list = list(s)
-	unq_list = list(set(s_list))
-	len_unq = len(unq_list)
-
-	for i in range(len_unq, 1, -1):
-		for conb in itertools.permutations(unq_list, i):
-			c_str = ''.join(conb)
-			if c_str in s:
-				return i
-
-	return 1
-
-def lengthOfLongestSubstring(s: str) -> int:
-	len_s = len(s)
-	max_len = len_s // 2
-	list_s = list(s)
-
-	
-
-
-#s = 'abcabcbb'
-#print(f's = {s} act = {lengthOfLongestSubstring(None, s)} expect = 3')
-s = 'pwwkew'
-print(f's = {s} act = {lengthOfLongestSubstring(None, s)} expect = 3')
+    def lengthOfLongestSubstring(self, s: str) -> int:
+        # スライディングウィンドウ法で高速化
+        char_set = set()
+        left = 0
+        max_len = 0
+        for right in range(len(s)):
+            while s[right] in char_set:
+                char_set.remove(s[left])
+                left += 1
+            char_set.add(s[right])
+            max_len = max(max_len, right - left + 1)
+        return max_len
+    
+sol = Solution()
+print(f'{sol.lengthOfLongestSubstring("abcabcbb")} expect 3')
+print(f'{sol.lengthOfLongestSubstring("bbbbb")} expect 1')
+print(f'{sol.lengthOfLongestSubstring("pwwkew")} expect 3')
+print(f'{sol.lengthOfLongestSubstring("")} expect 0')
+print(f'{sol.lengthOfLongestSubstring(" ")} expect 1')
+print(f'{sol.lengthOfLongestSubstring("aa")} expect 1')
+print(f'{sol.lengthOfLongestSubstring("au")} expect 2')
+print(f'{sol.lengthOfLongestSubstring("dvdf")} expect 3')
