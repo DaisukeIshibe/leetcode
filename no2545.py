@@ -1,12 +1,7 @@
 class Solution:
     def sortTheStudents(self, score: list[list[int]], k: int) -> list[list[int]]:
-        h = len(score)
-        target_list = []
-        for i in range(h):
-            target_list.append(score[i][k])
-        sorted_list = sorted(target_list, reverse=True)
-        print(f'target {target_list} {sorted_list}')
-        return
+        score.sort(key=lambda x: x[k], reverse=True)
+        return score
 
 sol = Solution()
 score = [[10,6,9,1],[7,5,11,2],[4,8,3,15]]
