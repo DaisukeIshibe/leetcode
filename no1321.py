@@ -27,11 +27,9 @@ customer = pd.DataFrame({
 # You are the restaurant owner and you want to analyze a possible expansion (there will be at least one customer every day).
 # Compute the moving average of how much the customer paid in a seven days window (i.e., current day + 6 days before). average_amount should be rounded to two decimal places.
 # Return the result table ordered by visited_on in ascending order.
-
 customer['visited_on'] = pd.to_datetime(customer['visited_on'])
 customer = customer.sort_values('visited_on')
-
 customer['average_amount'] = customer['amount'].rolling(window=7, min_periods=1).mean().round(2)
-
-result = customer[['visited_on', 'average_amount']].dropna().reset_index(drop=True)
-print(result)
+result = customer[['visited_on', 'amount', 'average_amount']]
+# Extract the columns 
+# | visited_on | average_amount |

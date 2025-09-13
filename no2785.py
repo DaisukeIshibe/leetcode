@@ -1,20 +1,15 @@
 class Solution:
-    vowels_dict = {'a','i','u','e','o','A','I','U','E','O'}
+    vowels_set = set('aiueoAIUEO')
 
     def sortVowels(self, s: str) -> str:
-        out_list = []
-        vowels_list = []
-        for c in s:
-            if c in self.vowels_dict:
-                out_list.append('-')
-                vowels_list.append(c)
-            else:
-                out_list.append(c)
-        vowels_list = sorted(vowels_list)
-        for idx, c in enumerate(out_list):
-            if c == '-':
-                out_list[idx] = vowels_list.pop(0)
-        #print(vowels_list)
+        out_list = list(s)
+        vowels = [c for c in out_list if c in self.vowels_set]
+        vowels.sort()
+        v_idx = 0
+        for i, c in enumerate(out_list):
+            if c in self.vowels_set:
+                out_list[i] = vowels[v_idx]
+                v_idx += 1
         return ''.join(out_list)
 
 
