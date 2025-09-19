@@ -1,11 +1,6 @@
 class Solution:
     def removeTrailingZeros(self, num: str) -> str:
-        while True:
-            if num.endswith('0'):
-                num = num[:(len(num)-1)]
-            else:
-                break
-        return num
+        return num.rstrip('0')
 
 sol = Solution()
 
