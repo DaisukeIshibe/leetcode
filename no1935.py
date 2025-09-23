@@ -1,14 +1,10 @@
 class Solution:
     def canBeTypedWords(self, text: str, brokenLetters: str) -> int:
+        if not brokenLetters:
+            return len(text.split())
+        
         b_set = set(brokenLetters)
-        t_list = text.split()
-        count = 0
-        for t in t_list:
-            for c in t:
-                if c in b_set:
-                    count += 1
-                    break
-        return len(t_list) - count
+        return sum(1 for word in text.split() if not any(c in b_set for c in word))
 
 sol = Solution()
 print(f'{sol.canBeTypedWords("hello world", "ad")} expect 1')
