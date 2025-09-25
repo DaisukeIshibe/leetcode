@@ -1,15 +1,12 @@
 class Solution:
     def minLength(self, s: str) -> int:
-        while True:
-            if 'AB' in s:
-                s = s.replace('AB', '', 1)
-            if 'CD' in s:
-                s = s.replace('CD', '', 1)
-            if ('AB' in s) or ('CD' in s):
-                pass
+        stack = []
+        for c in s:
+            if stack and ((stack[-1] == 'A' and c == 'B') or (stack[-1] == 'C' and c == 'D')):
+                stack.pop()
             else:
-                break
-        return len(s)
+                stack.append(c)
+        return len(stack)
 
 sol = Solution()
 print(f'{sol.minLength("ABFCACDB")} expect 2')
