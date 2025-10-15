@@ -1,10 +1,5 @@
 from typing import Optional
-'''
-You are given the head of a non-empty linked list representing a non-negative integer without leading zeroes.
 
-Return the head of the linked list after doubling it.
-'''
-# Definition for singly-linked list.
 class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
@@ -33,11 +28,33 @@ class Solution:
 
             if not curr.next and carry:
                 curr.next = ListNode(carry)
-                carry = 0  # キャリーをリセット
+                break  # 新しいノードを追加したらループを終了
             
             curr = curr.next
         
         return reverse(head)
 
+# テスト用のヘルパー関数
+def create_list(nums):
+    if not nums:
+        return None
+    head = ListNode(nums[0])
+    curr = head
+    for num in nums[1:]:
+        curr.next = ListNode(num)
+        curr = curr.next
+    return head
+
+def list_to_array(head):
+    result = []
+    curr = head
+    while curr:
+        result.append(curr.val)
+        curr = curr.next
+    return result
+
 sol = Solution()
-print(f'{sol.doubleIt(ListNode(1, ListNode(8, ListNode(9)))).val} expect [3,7,8]')
+# [9,9,9]のテスト
+test_list = create_list([9,9,9])
+result = sol.doubleIt(test_list)
+print(f'{list_to_array(result)} expect [1,9,9,8]')
