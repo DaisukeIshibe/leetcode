@@ -21,14 +21,23 @@ tree = pd.DataFrame({
     'p_id': [None, 1, 1, 2, 2]
 })
 
-# Identify root nodes (nodes with no parent)
-tree['type'] = 'Inner'
-tree.loc[tree['p_id'].isnull(), 'type'] = 'Root'
-# Identify leaf nodes (nodes that are not parents)
-# NaNを除外してから判定
-parent_ids = tree['p_id'].dropna()
-leaf_nodes = tree[~tree['id'].isin(parent_ids)]
-tree.loc[tree['id'].isin(leaf_nodes['id']), 'type'] = 'Leaf'
-# Output id and type columns
-tree = tree[['id', 'type']]
-print(tree)
+def report_node_types(tree: pd.DataFrame) -> pd.DataFrame:
+    node_types = []
+
+    for _, row in tree.iterrows():
+        node_id = row['id']
+        parent_id = row['p_id']
+        
+        # Check if the node is a root
+        if pd.isna(parent_id):
+            node_type = 'Root'
+        else:
+            # Check if the node is a leaf
+            if node_id not in tree['p_id'].values:
+                node_type = 'Leaf'
+            else:
+                node_type = 'Inner'
+        
+        node_types.append({'id': node_id, 'type': node_type})
+    
+    return pd.DataFrame(node_types)
