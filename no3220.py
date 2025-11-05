@@ -1,21 +1,84 @@
 import pandas as pd
+'''
+Table: transactions
 
-# データ
++------------------+------+
+| Column Name      | Type | 
++------------------+------+
+| transaction_id   | int  |
+| amount           | int  |
+| transaction_date | date |
++------------------+------+
+The transactions_id column uniquely identifies each row in this table.
+Each row of this table contains the transaction id, amount and transaction date.
+Write a solution to find the sum of amounts for odd and even transactions for each day. If there are no odd or even transactions for a specific date, display as 0.
+
+Return the result table ordered by transaction_date in ascending order.
+
+The result format is in the following example.
+
+ 
+
+Example:
+
+Input:
+
+transactions table:
+
++----------------+--------+------------------+
+| transaction_id | amount | transaction_date |
++----------------+--------+------------------+
+| 1              | 150    | 2024-07-01       |
+| 2              | 200    | 2024-07-01       |
+| 3              | 75     | 2024-07-01       |
+| 4              | 300    | 2024-07-02       |
+| 5              | 50     | 2024-07-02       |
+| 6              | 120    | 2024-07-03       |
++----------------+--------+------------------+
+  
+Output:
+
++------------------+---------+----------+
+| transaction_date | odd_sum | even_sum |
++------------------+---------+----------+
+| 2024-07-01       | 75      | 350      |
+| 2024-07-02       | 0       | 350      |
+| 2024-07-03       | 0       | 120      |
++------------------+---------+----------+
+'''
 transactions = pd.DataFrame({
     'transaction_id': [1, 2, 3, 4, 5, 6],
     'amount': [150, 200, 75, 300, 50, 120],
     'transaction_date': ['2024-07-01', '2024-07-01', '2024-07-01', '2024-07-02', '2024-07-02', '2024-07-03']
 })
 
-# 最も効率的で正確な解法
-def sum_odd_even_transactions_correct(transactions: pd.DataFrame) -> pd.DataFrame:
-    # 日付を datetime に変換し、奇数偶数フラグを追加
+# 方法1: 元のコードの修正版
+def sum_daily_odd_even_fixed(transactions: pd.DataFrame) -> pd.DataFrame:
+    # amountが奇数か偶数かで判定（修正点）
+    transactions = transactions.copy()
+    transactions['is_odd'] = transactions['amount'] % 2 != 0
+    
+    result = transactions.groupby('transaction_date').apply(
+        lambda x: pd.Series({
+            'odd_sum': x.loc[x['is_odd'], 'amount'].sum(),
+            'even_sum': x.loc[~x['is_odd'], 'amount'].sum()
+        })
+    ).reset_index()
+    
+    result['odd_sum'] = result['odd_sum'].fillna(0).astype(int)
+    result['even_sum'] = result['even_sum'].fillna(0).astype(int)
+    
+    return result.sort_values(by='transaction_date').reset_index(drop=True)
+
+# 方法2: 最適化版（推奨）
+def sum_daily_odd_even_optimized(transactions: pd.DataFrame) -> pd.DataFrame:
+    # amountの奇数偶数で分類
     df = transactions.assign(
         transaction_date=pd.to_datetime(transactions['transaction_date']),
-        is_odd=transactions['transaction_id'] % 2
+        is_odd=transactions['amount'] % 2
     )
     
-    # pivot_table で効率的に集計
+    # pivot_tableで効率的に集計
     result = (df.pivot_table(
         index='transaction_date',
         columns='is_odd',
@@ -27,15 +90,14 @@ def sum_odd_even_transactions_correct(transactions: pd.DataFrame) -> pd.DataFram
     # 列名を設定（0=偶数, 1=奇数）
     result.columns = ['transaction_date', 'even_sum', 'odd_sum']
     
-    # 列順序を調整
     return result[['transaction_date', 'odd_sum', 'even_sum']].sort_values('transaction_date').reset_index(drop=True)
 
-# より高速なベクトル化版
-def sum_odd_even_transactions_vectorized(transactions: pd.DataFrame) -> pd.DataFrame:
+# 方法3: 最高速ベクトル化版
+def sum_daily_odd_even_vectorized(transactions: pd.DataFrame) -> pd.DataFrame:
     df = transactions.assign(
         transaction_date=pd.to_datetime(transactions['transaction_date']),
-        odd_amount=lambda x: x['amount'] * (x['transaction_id'] % 2),
-        even_amount=lambda x: x['amount'] * (1 - x['transaction_id'] % 2)
+        odd_amount=lambda x: x['amount'] * (x['amount'] % 2),
+        even_amount=lambda x: x['amount'] * (1 - x['amount'] % 2)
     )
     
     return (df.groupby('transaction_date', as_index=False)
@@ -43,13 +105,13 @@ def sum_odd_even_transactions_vectorized(transactions: pd.DataFrame) -> pd.DataF
             .rename(columns={'odd_amount': 'odd_sum', 'even_amount': 'even_sum'})
             [['transaction_date', 'odd_sum', 'even_sum']])
 
-# 最高速版（NumPy風）
-def sum_odd_even_transactions_numpy_style(transactions: pd.DataFrame) -> pd.DataFrame:
+# 方法4: マスクを使った高速版
+def sum_daily_odd_even_mask(transactions: pd.DataFrame) -> pd.DataFrame:
     df = transactions.copy()
     df['transaction_date'] = pd.to_datetime(df['transaction_date'])
     
     # マスクを使った高速計算
-    odd_mask = df['transaction_id'] % 2 == 1
+    odd_mask = df['amount'] % 2 == 1
     df['odd_amount'] = df['amount'].where(odd_mask, 0)
     df['even_amount'] = df['amount'].where(~odd_mask, 0)
     
@@ -59,49 +121,47 @@ def sum_odd_even_transactions_numpy_style(transactions: pd.DataFrame) -> pd.Data
             .rename(columns={'odd_amount': 'odd_sum', 'even_amount': 'even_sum'}))
 
 # デバッグ用：詳細確認
-def debug_transactions(transactions: pd.DataFrame):
-    print("=== デバッグ情報 ===")
+def debug_amount_parity(transactions: pd.DataFrame):
+    print("=== Amount の奇数偶数判定 ===")
     df = transactions.copy()
-    df['transaction_date'] = pd.to_datetime(df['transaction_date'])
-    df['is_odd'] = df['transaction_id'] % 2
-    df['parity'] = df['transaction_id'].apply(lambda x: 'odd' if x % 2 == 1 else 'even')
+    df['amount_parity'] = df['amount'].apply(lambda x: 'odd' if x % 2 == 1 else 'even')
     
     print("詳細データ:")
-    print(df[['transaction_id', 'amount', 'transaction_date', 'parity']])
+    print(df[['transaction_id', 'amount', 'transaction_date', 'amount_parity']])
     print()
     
     for date, group in df.groupby('transaction_date'):
-        print(f"日付: {date.date()}")
-        odd_transactions = group[group['is_odd'] == 1]
-        even_transactions = group[group['is_odd'] == 0]
+        print(f"日付: {date}")
+        odd_amounts = group[group['amount'] % 2 == 1]
+        even_amounts = group[group['amount'] % 2 == 0]
         
-        print(f"  奇数ID取引: {list(odd_transactions['transaction_id'])} → 合計: {odd_transactions['amount'].sum()}")
-        print(f"  偶数ID取引: {list(even_transactions['transaction_id'])} → 合計: {even_transactions['amount'].sum()}")
+        print(f"  奇数amount: {list(odd_amounts['amount'])} → 合計: {odd_amounts['amount'].sum()}")
+        print(f"  偶数amount: {list(even_amounts['amount'])} → 合計: {even_amounts['amount'].sum()}")
         print()
 
 # 実行と結果確認
 print("=== デバッグ実行 ===")
-debug_transactions(transactions)
+debug_amount_parity(transactions)
 
-print("=== 正しい結果 ===")
-result_correct = sum_odd_even_transactions_correct(transactions)
-print(result_correct)
+print("=== 修正版結果 ===")
+result1 = sum_daily_odd_even_fixed(transactions)
+print(result1)
 print()
 
-print("=== ベクトル化版 ===")
-result_vectorized = sum_odd_even_transactions_vectorized(transactions)
-print(result_vectorized)
+print("=== 最適化版結果 ===")
+result2 = sum_daily_odd_even_optimized(transactions)
+print(result2)
 print()
 
-print("=== NumPy風版 ===")
-result_numpy = sum_odd_even_transactions_numpy_style(transactions)
-print(result_numpy)
+print("=== ベクトル化版結果 ===")
+result3 = sum_daily_odd_even_vectorized(transactions)
+print(result3)
+print()
 
-# 正しい期待される出力
-print("\n=== 正しい期待される出力 ===")
-correct_expected = pd.DataFrame({
+print("=== 期待される出力 ===")
+expected = pd.DataFrame({
     'transaction_date': pd.to_datetime(['2024-07-01', '2024-07-02', '2024-07-03']),
-    'odd_sum': [225, 50, 0],      # 修正: 150+75=225, 50, 0
-    'even_sum': [200, 300, 120]   # 修正: 200, 300, 120
+    'odd_sum': [75, 0, 0],       # 75のみが奇数
+    'even_sum': [350, 350, 120]  # 150+200=350, 300+50=350, 120
 })
-print(correct_expected)
+print(expected)
