@@ -1,12 +1,16 @@
 class Solution:
     def removeOuterParentheses(self, s: str) -> str:
-        s_ = s.replace('((','(')
-        s_ = s_.replace('))',')')
-        if s == s_:
-            return ''
-        else:
-            print(s_)
-            return s_
+        len_s = len(s)
+        stack_list = []
+        for i in range(len_s):
+            c = s[i]
+            if stack_list == []:
+                stack_list.append(c)
+            elif (stack_list[-1] == '(') and (c == ')'):
+                print('find ()')
+                stack_list.pop(-1)
+
+        return
 
 sol = Solution()
 s = "(()())(())"
