@@ -1,7 +1,9 @@
 class Solution:
     def maxSumDivThree(self, nums: list[int]) -> int:
-        sorted_list = sorted(nums, reverse=True)
-        print(sorted_list)
+        n_sum = sum(nums)
+        for i in nums:
+            pass
+        print(n_sum)
         return 0
 
 sol = Solution()
