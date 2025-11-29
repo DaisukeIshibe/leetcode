@@ -7,6 +7,9 @@ class Solution:
 
         print(s)
         out_list = []
+        len_s = len(s)
+        while len_s > 0:
+            pass
         skip_flag = False
         for i in range(len(s) - 2):
             a = s[i]
